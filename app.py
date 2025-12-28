@@ -1,5 +1,4 @@
 import streamlit as st
-import pandas as pd
 
 # -----------------------------
 # Page Config
@@ -13,19 +12,19 @@ st.markdown("Fill in student details to get a personalized learning path.")
 # Learning Paths
 # -----------------------------
 learning_paths = {
-    0: [
+    0: [  # Beginner
+        "Conceptual Reading Materials",
+        "Basic Quizzes",
+        "Guided Assignments",
+        "Introductory Case Studies"
+    ],
+    1: [  # Intermediate
         "Interactive Video Tutorials",
         "Hands-on Practice",
         "Weekly Assessments",
-        "Mini Project"
+        "Mini Projects"
     ],
-    1: [
-        "Conceptual Reading Materials",
-        "Quizzes",
-        "Case Studies",
-        "Guided Assignments"
-    ],
-    2: [
+    2: [  # Advanced
         "Advanced Projects",
         "Real-world Applications",
         "Mock Interviews",
@@ -54,15 +53,20 @@ average_score = st.slider("Average Score", 0, 100, 44)
 session_time = st.slider("Daily Study Time (minutes)", 0, 180, 45)
 
 # -----------------------------
-# Rule-Based + ML-Explainable Logic
+# Ordered Cluster Logic
 # -----------------------------
 def assign_cluster(progress, avg_score, courses, session_time):
+    # Cluster 0 → Beginner
     if avg_score < 50 or progress < 40:
-        return 1  # Beginner
-    elif avg_score >= 50 and progress < 75:
-        return 0  # Intermediate
+        return 0
+
+    # Cluster 1 → Intermediate
+    elif avg_score < 75 or progress < 75:
+        return 1
+
+    # Cluster 2 → Advanced
     else:
-        return 2  # Advanced
+        return 2
 
 # -----------------------------
 # Generate Learning Path
@@ -76,14 +80,13 @@ if st.button("Generate Learning Path"):
         session_time
     )
 
-    st.success(f"Student Cluster: {cluster}")
-
     cluster_names = {
-        0: "Intermediate Learner",
-        1: "Beginner Learner",
+        0: "Beginner Learner",
+        1: "Intermediate Learner",
         2: "Advanced Learner"
     }
 
+    st.success(f"Student Cluster: {cluster}")
     st.info(f"Category: {cluster_names[cluster]}")
 
     st.subheader("📚 Recommended Learning Path")
