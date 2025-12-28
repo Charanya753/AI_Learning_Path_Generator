@@ -1,22 +1,16 @@
 import streamlit as st
 import pandas as pd
-import joblib
 
 # -----------------------------
-# Load saved models
+# Page Config
 # -----------------------------
-@st.cache_resource
-def load_models():
-    kmeans = joblib.load("kmeans_model.pkl")
-    scaler = joblib.load("scaler.pkl")
-    le_style = joblib.load("learningstyle_encoder.pkl")
-    le_content = joblib.load("content_encoder.pkl")
-    return kmeans, scaler, le_style, le_content
+st.set_page_config(page_title="AI Learning Path Generator", layout="centered")
 
-kmeans, scaler, le_style, le_content = load_models()
+st.title("🎓 AI-Powered Personalized Learning Path Generator")
+st.markdown("Fill in student details to get a personalized learning path.")
 
 # -----------------------------
-# Learning paths per cluster
+# Learning Paths
 # -----------------------------
 learning_paths = {
     0: [
@@ -40,57 +34,58 @@ learning_paths = {
 }
 
 # -----------------------------
-# UI
+# Input Fields
 # -----------------------------
-st.set_page_config(page_title="AI Learning Path Generator", layout="centered")
-st.title("🎓 AI-Powered Personalized Learning Path Generator")
-
-st.markdown("Fill in student details to get a personalized learning path.")
-
-# Input fields
 learning_style = st.selectbox(
     "Learning Style",
-    le_style.classes_
+    ["Visual", "Auditory", "Reading/Writing", "Kinesthetic"]
 )
 
 preferred_content = st.selectbox(
     "Preferred Content Type",
-    le_content.classes_
+    ["Videos", "Articles", "Quizzes", "Projects"]
 )
 
-progress = st.slider("Progress (%)", 0, 100, 50)
+progress = st.slider("Progress (%)", 0, 100, 35)
 completed_courses = st.number_input(
     "Completed Courses", min_value=0, max_value=20, value=2
 )
-average_score = st.slider("Average Score", 0, 100, 70)
+average_score = st.slider("Average Score", 0, 100, 44)
 session_time = st.slider("Daily Study Time (minutes)", 0, 180, 45)
 
 # -----------------------------
-# Prediction
+# Rule-Based + ML-Explainable Logic
+# -----------------------------
+def assign_cluster(progress, avg_score, courses, session_time):
+    if avg_score < 50 or progress < 40:
+        return 1  # Beginner
+    elif avg_score >= 50 and progress < 75:
+        return 0  # Intermediate
+    else:
+        return 2  # Advanced
+
+# -----------------------------
+# Generate Learning Path
 # -----------------------------
 if st.button("Generate Learning Path"):
-    # Create input dataframe
-    input_df = pd.DataFrame([{
-        "LearningStyle": learning_style,
-        "Progress": progress,
-        "CompletedCourses": completed_courses,
-        "AverageScore": average_score,
-        "PreferredContent": preferred_content,
-        "SessionTime": session_time
-    }])
 
-    # Encode categorical features
-    input_df["LearningStyle"] = le_style.transform(input_df["LearningStyle"])
-    input_df["PreferredContent"] = le_content.transform(input_df["PreferredContent"])
+    cluster = assign_cluster(
+        progress,
+        average_score,
+        completed_courses,
+        session_time
+    )
 
-    # Scale features
-    scaled_input = scaler.transform(input_df)
-
-    # Predict cluster
-    cluster = kmeans.predict(scaled_input)[0]
-
-    # Display result
     st.success(f"Student Cluster: {cluster}")
+
+    cluster_names = {
+        0: "Intermediate Learner",
+        1: "Beginner Learner",
+        2: "Advanced Learner"
+    }
+
+    st.info(f"Category: {cluster_names[cluster]}")
+
     st.subheader("📚 Recommended Learning Path")
 
     for step in learning_paths[cluster]:
