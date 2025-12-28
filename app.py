@@ -1,15 +1,18 @@
 import streamlit as st
 
 # -----------------------------
-# Page Config
+# Page Configuration
 # -----------------------------
-st.set_page_config(page_title="AI Learning Path Generator", layout="centered")
+st.set_page_config(
+    page_title="AI Learning Path Generator",
+    layout="centered"
+)
 
 st.title("🎓 AI-Powered Personalized Learning Path Generator")
 st.markdown("Fill in student details to get a personalized learning path.")
 
 # -----------------------------
-# Learning Paths
+# Learning Paths (Ordered)
 # -----------------------------
 learning_paths = {
     0: [  # Beginner
@@ -33,7 +36,7 @@ learning_paths = {
 }
 
 # -----------------------------
-# Input Fields
+# User Inputs
 # -----------------------------
 learning_style = st.selectbox(
     "Learning Style",
@@ -45,26 +48,36 @@ preferred_content = st.selectbox(
     ["Videos", "Articles", "Quizzes", "Projects"]
 )
 
-progress = st.slider("Progress (%)", 0, 100, 35)
+progress = st.slider("Progress (%)", 0, 100, 25)
 completed_courses = st.number_input(
-    "Completed Courses", min_value=0, max_value=20, value=2
+    "Completed Courses",
+    min_value=0,
+    max_value=20,
+    value=1
 )
-average_score = st.slider("Average Score", 0, 100, 44)
-session_time = st.slider("Daily Study Time (minutes)", 0, 180, 45)
+average_score = st.slider("Average Score", 0, 100, 40)
+session_time = st.slider("Daily Study Time (minutes)", 0, 180, 150)
 
 # -----------------------------
-# Ordered Cluster Logic
+# Cluster Assignment Logic
 # -----------------------------
 def assign_cluster(progress, avg_score, courses, session_time):
-    # Cluster 0 → Beginner
-    if avg_score < 50 or progress < 40:
+    """
+    Cluster Mapping:
+    0 → Beginner
+    1 → Intermediate
+    2 → Advanced
+    """
+
+    # Beginner
+    if progress <= 40 and avg_score <= 50:
         return 0
 
-    # Cluster 1 → Intermediate
-    elif avg_score < 75 or progress < 75:
+    # Intermediate
+    elif progress <= 75 and avg_score <= 75:
         return 1
 
-    # Cluster 2 → Advanced
+    # Advanced
     else:
         return 2
 
