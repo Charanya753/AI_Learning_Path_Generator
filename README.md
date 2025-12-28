@@ -1,8 +1,7 @@
 
 # AI-Powered Personalized Learning Path Generator
 ## Problem Statement
-
-**Problem Statement ID:** 1647  
+ 
 **Title:** AI-Based Personalized Learning Path Generation System
 
 Traditional education systems often follow a uniform teaching approach, which does not address individual learning styles, strengths, and weaknesses. As a result, many students face learning gaps and reduced engagement. Personalized learning paths can significantly improve understanding, motivation, and academic performance by adapting content to each learner’s needs.
