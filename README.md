@@ -13,7 +13,7 @@ This project aims to develop an AI-powered personalized learning platform that a
 ## Dataset
 
 The dataset consists of student-related information such as performance scores, learning preferences, and progress details.
-You can find the dataset in the data/sample_data.csv file.
+You can find the dataset in the sample_data.csv file.
 ## Tools & Technologies
 
 Pandas: For student data manipulation and analysis.
